@@ -9,12 +9,18 @@ namespace Ems_System.Data
 {
     public class DataContext : DbContext
     {
+        public DataContext()
+        {
+        }
+
         public DataContext(DbContextOptions options) : base(options)
         {
 
         }
 
         public DbSet<AppUser> Employee_master { get; set; }
+
+        public DbSet<AppLeave> users_leave { get; set; }
        
     }
 }

@@ -55,6 +55,41 @@ namespace Ems_System.Controllers
             
 
         }
+        [HttpDelete("delete")]
+        public void delete(int id)
+        {
+            _context.Employee_master.Remove(_context.Employee_master.FirstOrDefault(e => e.userid == id));
+            
+            
+            _context.SaveChanges(); 
+
+            
+        }
+
+
+
+
+        [HttpPut("update")]
+        public void Put(int id,[FromBody]RegisterDTO registerDto)
+        {
+            
+            
+                var entity = _context.Employee_master.FirstOrDefault(u => u.userid == id);
+
+                entity.name = registerDto.name;
+                entity.age = registerDto.age;
+                entity.department = registerDto.department;
+                entity.username = registerDto.Username;
+                entity.password = registerDto.Password;
+                entity.role = registerDto.role;
+
+
+
+                _context.SaveChanges();
+            
+
+        }
+
         private async Task<bool> UserExists(string username)
         {
             return await _context.Employee_master.AnyAsync(X => X.username == username.ToLower());

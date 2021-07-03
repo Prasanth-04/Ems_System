@@ -11,7 +11,7 @@ namespace Ems_System.Entity
         [Key]
         public int userid { get; set; }
         public string name { get; set; }
-        public DateTime joiningdate { get; set; }
+        public string joiningdate { get; set; }
         public int age { get; set; }
         public string department { get; set; }
 

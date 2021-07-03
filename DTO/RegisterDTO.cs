@@ -12,7 +12,7 @@ namespace Ems_System.DTO
         [Required]
         public string name { get; set; }
         [Required]
-        public DateTime joiningdate { get; set; }
+        public string joiningdate { get; set; }
         [Required]
         public int age { get; set; }
         [Required]

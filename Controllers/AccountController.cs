@@ -58,8 +58,16 @@ namespace Ems_System.Controllers
         [HttpDelete("delete")]
         public void delete(int id)
         {
-            _context.Employee_master.Remove(_context.Employee_master.FirstOrDefault(e => e.userid == id));
-            
+            try
+            {
+                _context.Employee_master.Remove(_context.Employee_master.FirstOrDefault(e => e.userid == id));
+            }
+            catch (Exception)
+            {
+
+                BadRequest("invalid user id ");
+            }
+           
             
             _context.SaveChanges(); 
 
@@ -94,5 +102,7 @@ namespace Ems_System.Controllers
         {
             return await _context.Employee_master.AnyAsync(X => X.username == username.ToLower());
         }
+
+        
     }
 }

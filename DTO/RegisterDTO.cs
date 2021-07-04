@@ -26,5 +26,7 @@ namespace Ems_System.DTO
         [Required]
 
         public int role { get; set; }
+
+       
     }
 }

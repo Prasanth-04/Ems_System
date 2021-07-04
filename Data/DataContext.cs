@@ -21,6 +21,7 @@ namespace Ems_System.Data
         public DbSet<AppUser> Employee_master { get; set; }
 
         public DbSet<AppLeave> users_leave { get; set; }
-       
+        
+
     }
 }

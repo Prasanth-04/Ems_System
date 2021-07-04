@@ -17,8 +17,13 @@ namespace Ems_System.Entity
 
         public string username { get; set; }
 
-        public string password { get; set; }
+        public byte[] passwordhash { get; set; }
+
+        public byte[] passwordsalt { get; set; }
+
 
         public int role { get; set; }/*0-admin,1-manager,2-employee*/
+
+       
     }
 }

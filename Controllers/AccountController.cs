@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
+using System.Text;
 using System.Threading.Tasks;
 using Ems_System.Data;
 using Ems_System.DTO;
@@ -21,20 +23,26 @@ namespace Ems_System.Controllers
            
         }
         [HttpPost("register")]
-        public async Task<ActionResult<AppUser>> Register(RegisterDTO registerDto)
+        public async Task<ActionResult<AppUser>> Register(RegisterDTO registerDto )
         {
+            ManagerDTO managerDTO = new ManagerDTO();
             if (await UserExists(registerDto.Username)) return BadRequest("Username is taken");
+            using var hmac = new HMACSHA512();
             var user = new AppUser
             {
                 username = registerDto.Username.ToLower(),
-                password = registerDto.Password,
+                passwordhash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+                passwordsalt = hmac.Key,
                 joiningdate = registerDto.joiningdate,
                 name = registerDto.name,
                 age = registerDto.age,
                 department = registerDto.department,
                 role = registerDto.role
+              
 
             };
+           
+           
             _context.Employee_master.Add(user);
             await _context.SaveChangesAsync();
             return user;
@@ -45,9 +53,13 @@ namespace Ems_System.Controllers
         {
             var user = await _context.Employee_master.SingleOrDefaultAsync(x => x.username == loginDto.username);
             if (user == null) return Unauthorized("Invalid Username");
-            for (int i = 0; i < loginDto.password.Length; i++)
+
+            using var hmac = new HMACSHA512(user.passwordsalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.password));
+            
+            for (int i = 0; i < computedHash.Length; i++)
             {
-                if (loginDto.password[i] != user.password[i]) return Unauthorized("Invalid Password");
+                if (computedHash[i] != user.passwordhash[i]) return Unauthorized("Invalid Password");
             }
 
             return user;
@@ -80,16 +92,17 @@ namespace Ems_System.Controllers
         [HttpPut("update")]
         public void Put(int id,[FromBody]RegisterDTO registerDto)
         {
-            
-            
-                var entity = _context.Employee_master.FirstOrDefault(u => u.userid == id);
+
+            using var hmac = new HMACSHA512();
+            var entity = _context.Employee_master.FirstOrDefault(u => u.userid == id);
 
                 entity.name = registerDto.name;
                 entity.age = registerDto.age;
                 entity.department = registerDto.department;
                 entity.username = registerDto.Username;
-                entity.password = registerDto.Password;
                 entity.role = registerDto.role;
+            entity.passwordhash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+            entity.passwordsalt = hmac.Key;
 
 
 
